@@ -1,25 +1,33 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
 dotenv.config({
   path: path.resolve(__dirname, `.env`),
 });
+
+const STORAGE_STATE = path.resolve(__dirname, process.env.STORAGE_STATE_PATH || 'playwright/.auth/session.json');
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  // Secuencial: en el Panel Mach, "Completar/Fallar pagos pendientes" afecta a TODAS las
+  // transacciones pendientes, así que dos tests en paralelo se pisarían los pagos (handoff, 4.3).
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: [
     ['html'],
     ['junit', { outputFile: 'results.xml' }]
   ],
   use: {
+    // Sesión guardada con `npm run auth:save` (cookies del admin de Shopify, la tienda y el Panel Mach).
+    // Evita el login, el doble factor y la verificación de Cloudflare en cada corrida.
+    storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
     trace: 'on-first-retry',
     viewport: { width: 1920, height: 1080 }
   },
@@ -29,7 +37,9 @@ export default defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        viewport: { width: 1920, height: 1080 }
+        viewport: { width: 1920, height: 1080 },
+        // Opcional: usar un Chromium ya instalado (p. ej. en entornos sin `npx playwright install`).
+        launchOptions: { executablePath: process.env.PW_CHROMIUM_PATH || undefined },
       },
     },
     
