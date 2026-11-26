@@ -14,10 +14,12 @@ const STORAGE_STATE = path.resolve(__dirname, process.env.STORAGE_STATE_PATH || 
  */
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  // Secuencial: en el Panel Mach, "Completar/Fallar pagos pendientes" afecta a TODAS las
+  // transacciones pendientes, así que dos tests en paralelo se pisarían los pagos (handoff, 4.3).
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: [
     ['html'],
     ['junit', { outputFile: 'results.xml' }]
