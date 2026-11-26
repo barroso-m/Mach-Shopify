@@ -144,6 +144,22 @@ X_USER_ID=67890
 npx playwright install
 ```
 
+### Paso 5: Guardar la sesión (login, doble factor y Cloudflare)
+
+El admin de Shopify pide doble factor y una verificación de Cloudflare que no se puede automatizar. Por eso los tests usan una sesión ya iniciada:
+
+```bash
+npm run auth:save
+```
+
+Se abre un navegador. En esa ventana:
+1. Iniciá sesión en el admin de Shopify (`mach-stage`) completando el doble factor.
+2. Abrí la tienda `https://mach-stage.myshopify.com` e ingresá la contraseña de la tienda.
+3. Abrí el Panel Mach staging (`https://pay-staging.somosmach.com`) e iniciá sesión.
+4. Cerrá la ventana: la sesión queda en `playwright/.auth/session.json`.
+
+Ese archivo **no se versiona** (equivale a tus credenciales). Cuando la sesión vence, se repite el paso.
+
 ---
 
 ## 🚀 Primeros Pasos

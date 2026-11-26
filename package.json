@@ -9,7 +9,8 @@
     "test:ui": "playwright test --ui",
     "test:ui:chrome": "playwright test --ui --project=chromium",
     "test:chrome": "playwright test --project=chromium",
-    "test:login": "playwright test tests/specs/E2E/E2E_Login.spec.ts --project=chromium"
+    "test:login": "playwright test tests/specs/E2E/E2E_Login.spec.ts --project=chromium",
+    "auth:save": "playwright codegen --save-storage=playwright/.auth/session.json https://admin.shopify.com/store/mach-stage"
   },
   "keywords": [],
   "author": "",
