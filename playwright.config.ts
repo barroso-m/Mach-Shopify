@@ -29,7 +29,9 @@ export default defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        viewport: { width: 1920, height: 1080 }
+        viewport: { width: 1920, height: 1080 },
+        // Opcional: usar un Chromium ya instalado (p. ej. en entornos sin `npx playwright install`).
+        launchOptions: { executablePath: process.env.PW_CHROMIUM_PATH || undefined },
       },
     },
     
